@@ -1,1 +1,1 @@
-# adverity-challenge
+# react-exercise
