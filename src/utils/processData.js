@@ -46,11 +46,15 @@ export const returnData = (arr, category, filter) => {
   _.each(byDate, function(dateArray) {
     let computedItem = {
       Date: "",
+      Datasource: "",
+      Campaign: "",
       Impressions: 0,
       Clicks: 0
     };
     _.each(dateArray, function(item) {
       computedItem.Date = item.Date;
+      computedItem.Datasource = item.Datasource;
+      computedItem.Campaign = item.Campaign;
       computedItem.Impressions += +item.Impressions;
       computedItem.Clicks += +item.Clicks;
     });
@@ -61,7 +65,7 @@ export const returnData = (arr, category, filter) => {
 };
 
 /// chain into one variable
-const filterBy = (array, key, value) => {
+export const filterBy = (array, key, value) => {
   let filteredArray = _.filter(array, { [key]: value });
   let newArray = _.map(_.groupBy(filteredArray, "Date"), o => {
     return {
