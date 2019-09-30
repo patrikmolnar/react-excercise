@@ -1,12 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "../App.css";
-import {
-  convertData,
-  filterByDatasource,
-  filterByCampaign,
-  returnAll
-} from "../utils/processData";
+import { convertData, returnData } from "../utils/processData";
 import Chart from "./Chart";
 
 const App = () => {
@@ -25,7 +20,7 @@ const App = () => {
 
   return (
     <div style={{ width: "100%", flex: 1, justifyContent: "center" }}>
-      <Chart data={returnAll(data)} />
+      <Chart data={returnData(data)} />
     </div>
   );
 };

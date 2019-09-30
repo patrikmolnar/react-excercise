@@ -35,7 +35,12 @@ const getSum = (arr, key) => {
   );
 };
 
-export const returnAll = arr => {
+export const returnData = (arr, category, filter) => {
+  if (category === "Datasource" || category === "Campaign") {
+    return filterBy(arr, category, filter);
+  }
+
+  // if no filter then return all
   let byDate = _.groupBy(arr, "Date");
   let output = [];
   _.each(byDate, function(dateArray) {
@@ -59,22 +64,8 @@ export const returnAll = arr => {
 };
 
 /// chain into one variable
-export const filterByDatasource = (array, value) => {
-  let filteredArray = _.filter(array, { Datasource: value });
-  let newArray = _.map(_.groupBy(filteredArray, "Date"), o => {
-    return {
-      Date: o[0].Date,
-      Datasource: o[0].Datasource,
-      Campaign: o[0].Campaign,
-      Impressions: getSum(o, "Impressions"),
-      Clicks: getSum(o, "Clicks")
-    };
-  });
-  return newArray;
-};
-
-export const filterByCampaign = (array, value) => {
-  let filteredArray = _.filter(array, { Campaign: value });
+const filterBy = (array, key, value) => {
+  let filteredArray = _.filter(array, { [key]: value });
   let newArray = _.map(_.groupBy(filteredArray, "Date"), o => {
     return {
       Date: o[0].Date,
