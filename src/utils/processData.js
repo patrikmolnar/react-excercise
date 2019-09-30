@@ -1,47 +1,88 @@
-import _ from 'lodash'
+import _ from "lodash";
 
 export const convertData = data => {
-  let csvRowArray = data.split(/\n/)
-  let headerCellArray = removeQuotes(csvRowArray.shift().split(','))
-  let objectArray = []
+  let csvRowArray = data.split(/\n/);
+  let headerCellArray = removeQuotes(csvRowArray.shift().split(","));
+  let objectArray = [];
 
   while (csvRowArray.length) {
-    let rowCellArray = removeQuotes(csvRowArray.shift().split(','))
-    let rowObject = _.zipObject(headerCellArray, rowCellArray)
-    objectArray.push(rowObject)
+    let rowCellArray = removeQuotes(csvRowArray.shift().split(","));
+    let rowObject = _.zipObject(headerCellArray, rowCellArray);
+    objectArray.push(rowObject);
   }
-  return filterByDatasource(objectArray)
-}
+  return objectArray;
+};
 
 const removeQuotes = stringArray => {
-  const leng = stringArray.length
-  for (let i = 0; i < leng; i++) {
-    stringArray[i] = _.trim(stringArray[i], '"')
+  const len = stringArray.length;
+  for (let i = 0; i < len; i++) {
+    stringArray[i] = _.trim(stringArray[i], '"');
   }
-  return stringArray
-}
+  return stringArray;
+};
 
 const getSum = (arr, key) => {
   return _.sumBy(
     _.map(arr, n => {
-      n[key] = parseInt(n[key])
-      return n
+      if (n[key]) {
+        n[key] = parseInt(n[key]);
+      } else {
+        n[key] = 0;
+      }
+      return n;
     }),
     `${key}`
-  )
-}
+  );
+};
 
-// chain into one variable
-const filterByDatasource = array => {
-  var filteredArray = _.filter(array, { Datasource: 'Facebook Ads' })
-  var newArray = _.map(_.groupBy(filteredArray, 'Date'), o => {
+export const returnAll = arr => {
+  let byDate = _.groupBy(arr, "Date");
+  let output = [];
+  _.each(byDate, function(dateArray) {
+    let computedItem = {
+      Date: "",
+      Impressions: 0,
+      Clicks: 0
+    };
+    _.each(dateArray, function(item) {
+      if (item.Impressions === "") {
+        item.Impressions = 0;
+      }
+      computedItem.Date = item.Date;
+      computedItem.Impressions += parseInt(item.Impressions);
+      computedItem.Clicks += parseInt(item.Clicks);
+    });
+    output.push(computedItem);
+  });
+  output.pop();
+  return output;
+};
+
+/// chain into one variable
+export const filterByDatasource = (array, value) => {
+  let filteredArray = _.filter(array, { Datasource: value });
+  let newArray = _.map(_.groupBy(filteredArray, "Date"), o => {
     return {
       Date: o[0].Date,
       Datasource: o[0].Datasource,
       Campaign: o[0].Campaign,
-      summedImpressions: getSum(o, 'Impressions'),
-      summedClicks: getSum(o, 'Clicks')
-    }
-  })
-  return newArray
-}
+      Impressions: getSum(o, "Impressions"),
+      Clicks: getSum(o, "Clicks")
+    };
+  });
+  return newArray;
+};
+
+export const filterByCampaign = (array, value) => {
+  let filteredArray = _.filter(array, { Campaign: value });
+  let newArray = _.map(_.groupBy(filteredArray, "Date"), o => {
+    return {
+      Date: o[0].Date,
+      Datasource: o[0].Datasource,
+      Campaign: o[0].Campaign,
+      Impressions: getSum(o, "Impressions"),
+      Clicks: getSum(o, "Clicks")
+    };
+  });
+  return newArray;
+};
