@@ -50,12 +50,9 @@ export const returnData = (arr, category, filter) => {
       Clicks: 0
     };
     _.each(dateArray, function(item) {
-      if (item.Impressions === "") {
-        item.Impressions = 0;
-      }
       computedItem.Date = item.Date;
-      computedItem.Impressions += parseInt(item.Impressions);
-      computedItem.Clicks += parseInt(item.Clicks);
+      computedItem.Impressions += +item.Impressions;
+      computedItem.Clicks += +item.Clicks;
     });
     output.push(computedItem);
   });
